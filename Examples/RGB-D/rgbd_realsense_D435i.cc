@@ -35,7 +35,7 @@
 #include "librealsense2/rsutil.h"
 #include <librealsense2/rs.hpp>
 
-#include <System.h>
+#include "orbslam3/trackingFrontend/System.h"
 
 using namespace std;
 
@@ -327,8 +327,8 @@ int main(int argc, char **argv) {
       std::chrono::steady_clock::time_point time_Start_Process =
           std::chrono::steady_clock::now();
 #else
-      std::chrono::monotonic_clock::time_point time_Start_Process =
-          std::chrono::monotonic_clock::now();
+      std::chrono::steady_clock::time_point time_Start_Process =
+          std::chrono::steady_clock::now();
 #endif
 
       fs = fsSLAM;
@@ -366,8 +366,8 @@ int main(int argc, char **argv) {
       std::chrono::steady_clock::time_point t_Start_Resize =
           std::chrono::steady_clock::now();
 #else
-      std::chrono::monotonic_clock::time_point t_Start_Resize =
-          std::chrono::monotonic_clock::now();
+      std::chrono::steady_clock::time_point t_Start_Resize =
+          std::chrono::steady_clock::now();
 #endif
 #endif
       int width = im.cols * imageScale;
@@ -380,8 +380,8 @@ int main(int argc, char **argv) {
       std::chrono::steady_clock::time_point t_End_Resize =
           std::chrono::steady_clock::now();
 #else
-      std::chrono::monotonic_clock::time_point t_End_Resize =
-          std::chrono::monotonic_clock::now();
+      std::chrono::steady_clock::time_point t_End_Resize =
+          std::chrono::steady_clock::now();
 #endif
       t_resize =
           std::chrono::duration_cast<std::chrono::duration<double, std::milli>>(
@@ -396,8 +396,8 @@ int main(int argc, char **argv) {
     std::chrono::steady_clock::time_point t_Start_Track =
         std::chrono::steady_clock::now();
 #else
-    std::chrono::monotonic_clock::time_point t_Start_Track =
-        std::chrono::monotonic_clock::now();
+    std::chrono::steady_clock::time_point t_Start_Track =
+        std::chrono::steady_clock::now();
 #endif
 #endif
     // Pass the image to the SLAM system
@@ -408,8 +408,8 @@ int main(int argc, char **argv) {
     std::chrono::steady_clock::time_point t_End_Track =
         std::chrono::steady_clock::now();
 #else
-    std::chrono::monotonic_clock::time_point t_End_Track =
-        std::chrono::monotonic_clock::now();
+    std::chrono::steady_clock::time_point t_End_Track =
+        std::chrono::steady_clock::now();
 #endif
     t_track =
         t_resize +

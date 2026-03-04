@@ -34,8 +34,8 @@
 
 #include <opencv2/core/core.hpp>
 
-#include "../../../include/System.h"
-#include "../include/ImuTypes.h"
+#include "orbslam3/trackingFrontend/System.h"
+#include "orbslam3/commonCore/ImuTypes.h"
 
 using namespace std;
 

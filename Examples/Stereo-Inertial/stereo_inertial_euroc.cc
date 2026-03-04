@@ -29,9 +29,9 @@
 
 #include <opencv2/core/core.hpp>
 
-#include "ImuTypes.h"
-#include "Optimizer.h"
-#include <System.h>
+#include "orbslam3/commonCore/ImuTypes.h"
+#include "orbslam3/optimizationCore/Optimizer.h"
+#include "orbslam3/trackingFrontend/System.h"
 
 using namespace std;
 
@@ -187,8 +187,8 @@ int main(int argc, char **argv) {
       std::chrono::steady_clock::time_point t1 =
           std::chrono::steady_clock::now();
 #else
-      std::chrono::monotonic_clock::time_point t1 =
-          std::chrono::monotonic_clock::now();
+      std::chrono::steady_clock::time_point t1 =
+          std::chrono::steady_clock::now();
 #endif
 
       // Pass the images to the SLAM system
@@ -198,8 +198,8 @@ int main(int argc, char **argv) {
       std::chrono::steady_clock::time_point t2 =
           std::chrono::steady_clock::now();
 #else
-      std::chrono::monotonic_clock::time_point t2 =
-          std::chrono::monotonic_clock::now();
+      std::chrono::steady_clock::time_point t2 =
+          std::chrono::steady_clock::now();
 #endif
 
 #ifdef REGISTER_TIMES

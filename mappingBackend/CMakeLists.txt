@@ -1,0 +1,22 @@
+add_library(slam_orbslam3_mappingBackend STATIC
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/LocalMapping.cc
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/LoopClosing.cc
+)
+
+target_compile_features(slam_orbslam3_mappingBackend PUBLIC cxx_std_17)
+
+target_include_directories(slam_orbslam3_mappingBackend
+    PUBLIC
+        ${CMAKE_CURRENT_SOURCE_DIR}/include
+        ${OpenCV_INCLUDE_DIRS}
+)
+
+target_link_libraries(slam_orbslam3_mappingBackend
+    PUBLIC
+        slam_orbslam3_configCore
+        slam_orbslam3_trackingFrontend
+        slam_orbslam3_mapCore
+        slam_orbslam3_optimizationCore
+    PRIVATE
+        slam_ext_g2o
+)

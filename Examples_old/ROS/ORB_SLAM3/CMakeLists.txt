@@ -38,14 +38,19 @@ if(NOT OpenCV_FOUND)
    endif()
 endif()
 
-find_package(Eigen3 3.1.0 REQUIRED)
 find_package(Pangolin REQUIRED)
 
 include_directories(
 ${PROJECT_SOURCE_DIR}
 ${PROJECT_SOURCE_DIR}/../../../
-${PROJECT_SOURCE_DIR}/../../../include
-${PROJECT_SOURCE_DIR}/../../../include/CameraModels
+${PROJECT_SOURCE_DIR}/../../../commonCore/include
+${PROJECT_SOURCE_DIR}/../../../cameraModel/include
+${PROJECT_SOURCE_DIR}/../../../featureCore/include
+${PROJECT_SOURCE_DIR}/../../../mapCore/include
+${PROJECT_SOURCE_DIR}/../../../optimizationCore/include
+${PROJECT_SOURCE_DIR}/../../../trackingFrontend/include
+${PROJECT_SOURCE_DIR}/../../../mappingBackend/include
+${PROJECT_SOURCE_DIR}/../../../visualizationUi/include
 ${Pangolin_INCLUDE_DIRS}
 )
 
@@ -53,9 +58,9 @@ set(LIBS
 ${OpenCV_LIBS} 
 ${EIGEN3_LIBS}
 ${Pangolin_LIBRARIES}
-${PROJECT_SOURCE_DIR}/../../../Thirdparty/DBoW2/lib/libDBoW2.so
-${PROJECT_SOURCE_DIR}/../../../Thirdparty/g2o/lib/libg2o.so
-${PROJECT_SOURCE_DIR}/../../../lib/libORB_SLAM3.so
+${PROJECT_SOURCE_DIR}/../../../ext/DBoW2/lib/libDBoW2.so
+${PROJECT_SOURCE_DIR}/../../../ext/g2o/lib/libg2o.so
+${PROJECT_SOURCE_DIR}/../../../lib/libslam_orbslam3.so
 -lboost_system
 )
 

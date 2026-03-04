@@ -21,7 +21,7 @@ The original code is BSD licensed.
 The code is from: http://graphics.stanford.edu/~seander/bithacks.html#CountBitsSetParallel.
 The code is in the public domain.
 
-#####Code in Thirdparty folder
+#####Code in ext folder
 
 * All code in **DBoW2** folder.
 This is a modified version of [DBoW2](https://github.com/dorian3d/DBoW2) and [DLib](https://github.com/dorian3d/DLib) library. All files included are BSD licensed.
