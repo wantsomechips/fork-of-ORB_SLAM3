@@ -32,6 +32,7 @@
 
 #include "g2o/types/types_seven_dof_expmap.h"
 #include <boost/algorithm/string.hpp>
+#include <functional>
 #include <mutex>
 #include <thread>
 
@@ -63,6 +64,10 @@ class LoopClosing
 
     void InsertKeyFrame(KeyFrame *pKF);
 
+    // Loop/merge validation callback: return false to reject
+    using LoopValidationFn = std::function<bool(KeyFrame* current, KeyFrame* candidate, const g2o::Sim3& transform)>;
+    void SetLoopValidationCallback(LoopValidationFn fn) { mLoopValidationFn = std::move(fn); }
+
     void RequestReset();
     void RequestResetActiveMap(Map *pMap);
 
@@ -83,8 +88,6 @@ class LoopClosing
     void RequestFinish();
 
     bool isFinished();
-
-    Viewer *mpViewer;
 
 #ifdef REGISTER_TIMES
 
@@ -237,6 +240,9 @@ class LoopClosing
 
     // To (de)activate LC
     bool mbActiveLC = true;
+
+    // External validation callback for loop/merge
+    LoopValidationFn mLoopValidationFn;
 
 #ifdef REGISTER_LOOP
     string mstrFolderLoop;

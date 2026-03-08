@@ -47,7 +47,7 @@ Tracking::Tracking(System *pSys, ORBVocabulary *pVoc, FrameDrawer *pFrameDrawer,
     : mState(NO_IMAGES_YET), mSensor(sensor), mTrackedFr(0), mbStep(false),
       mbOnlyTracking(false), mbMapUpdated(false), mbVO(false),
       mpORBVocabulary(pVoc), mpKeyFrameDB(pKFDB), mbReadyToInitializate(false),
-      mpSystem(pSys), mpViewer(NULL), bStepByStep(false),
+      mpSystem(pSys), bStepByStep(false),
       mpFrameDrawer(pFrameDrawer), mpMapDrawer(pMapDrawer), mpAtlas(pAtlas),
       mnLastRelocFrameId(0), time_recently_lost(5.0), mnInitialFrameId(0),
       mbCreatedMap(false), mnFirstFrameId(0), mpCamera2(nullptr),
@@ -1358,11 +1358,7 @@ void Tracking::SetLoopClosing(LoopClosing *pLoopClosing) {
   mpLoopClosing = pLoopClosing;
 }
 
-void Tracking::SetViewer(Viewer *pViewer) { mpViewer = pViewer; }
 
-void Tracking::SetStepByStep(bool bSet) { bStepByStep = bSet; }
-
-bool Tracking::GetStepByStep() { return bStepByStep; }
 
 Sophus::SE3f Tracking::GrabImageStereo(const cv::Mat &imRectLeft,
                                        const cv::Mat &imRectRight,
@@ -3586,11 +3582,7 @@ bool Tracking::Relocalization() {
 void Tracking::Reset(bool bLocMap) {
   Verbose::PrintMess("System Reseting", Verbose::VERBOSITY_NORMAL);
 
-  if (mpViewer) {
-    mpViewer->RequestStop();
-    while (!mpViewer->isStopped())
-      usleep(3000);
-  }
+  mResetting = true;
 
   // Reset Local Mapping
   if (!bLocMap) {
@@ -3635,19 +3627,14 @@ void Tracking::Reset(bool bLocMap) {
   mpLastKeyFrame = static_cast<KeyFrame *>(NULL);
   mvIniMatches.clear();
 
-  if (mpViewer)
-    mpViewer->Release();
+  mResetting = false;
 
   Verbose::PrintMess("   End reseting! ", Verbose::VERBOSITY_NORMAL);
 }
 
 void Tracking::ResetActiveMap(bool bLocMap) {
   Verbose::PrintMess("Active map Reseting", Verbose::VERBOSITY_NORMAL);
-  if (mpViewer) {
-    mpViewer->RequestStop();
-    while (!mpViewer->isStopped())
-      usleep(3000);
-  }
+  mResetting = true;
 
   Map *pMap = mpAtlas->GetCurrentMap();
 
@@ -3720,8 +3707,7 @@ void Tracking::ResetActiveMap(bool bLocMap) {
 
   mbVelocity = false;
 
-  if (mpViewer)
-    mpViewer->Release();
+  mResetting = false;
 
   Verbose::PrintMess("   End reseting! ", Verbose::VERBOSITY_NORMAL);
 }

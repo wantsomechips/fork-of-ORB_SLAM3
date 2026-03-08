@@ -69,7 +69,7 @@ int main(int argc, char **argv) {
   }
 
   ORB_SLAM3::System SLAM(argv[1], argv[2], ORB_SLAM3::System::IMU_MONOCULAR,
-                         true, 0, file_name);
+                         0, file_name);
   float imageScale = SLAM.GetImageScale();
 
   struct sigaction sigIntHandler;

@@ -410,6 +410,11 @@ void MapDrawer::SetCurrentCameraPose(const Sophus::SE3f &Tcw) {
   mCameraPose = Tcw.inverse();
 }
 
+Sophus::SE3f MapDrawer::GetCameraPose() const {
+  unique_lock<mutex> lock(mMutexCamera);
+  return mCameraPose;
+}
+
 void MapDrawer::GetCurrentOpenGLCameraMatrix(pangolin::OpenGlMatrix &M,
                                              pangolin::OpenGlMatrix &MOw) {
   Eigen::Matrix4f Twc;

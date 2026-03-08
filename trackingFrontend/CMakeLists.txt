@@ -1,6 +1,8 @@
 add_library(slam_orbslam3_trackingFrontend STATIC
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Tracking.cc
     ${CMAKE_CURRENT_SOURCE_DIR}/src/System.cc
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/TrackingInput.cc
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/SlamSession.cc
 )
 
 target_compile_features(slam_orbslam3_trackingFrontend PUBLIC cxx_std_17)

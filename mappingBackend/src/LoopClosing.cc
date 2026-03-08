@@ -167,7 +167,10 @@ void LoopClosing::Run() {
 
             mg2oMergeScw = mg2oMergeSlw;
 
-            // mpTracker->SetStepByStep(true);
+            if (mLoopValidationFn && !mLoopValidationFn(mpCurrentKF, mpMergeMatchedKF, mg2oMergeScw)) {
+              Verbose::PrintMess("Merge rejected by validation callback", Verbose::VERBOSITY_QUIET);
+              continue;
+            }
 
             Verbose::PrintMess("*Merge detected", Verbose::VERBOSITY_QUIET);
 
@@ -177,7 +180,6 @@ void LoopClosing::Run() {
 
             nMerges += 1;
 #endif
-            // TODO UNCOMMENT
             if (mpTracker->mSensor == System::IMU_MONOCULAR ||
                 mpTracker->mSensor == System::IMU_STEREO ||
                 mpTracker->mSensor == System::IMU_RGBD)
@@ -264,7 +266,7 @@ void LoopClosing::Run() {
             }
           }
 
-          if (bGoodLoop) {
+          if (bGoodLoop && (!mLoopValidationFn || mLoopValidationFn(mpCurrentKF, mpLoopMatchedKF, mg2oLoopScw))) {
 
             mvpLoopMapPoints = mvpLoopMPs;
 

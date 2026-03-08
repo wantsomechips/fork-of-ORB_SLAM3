@@ -1,24 +1,3 @@
-/**
- * This file is part of ORB-SLAM3
- *
- * Copyright (C) 2017-2021 Carlos Campos, Richard Elvira, Juan J. Gómez
- * Rodríguez, José M.M. Montiel and Juan D. Tardós, University of Zaragoza.
- * Copyright (C) 2014-2016 Raúl Mur-Artal, José M.M. Montiel and Juan D. Tardós,
- * University of Zaragoza.
- *
- * ORB-SLAM3 is free software: you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option) any later
- * version.
- *
- * ORB-SLAM3 is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE. See the GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along with
- * ORB-SLAM3. If not, see <http://www.gnu.org/licenses/>.
- */
-
 #ifndef SYSTEM_H
 #define SYSTEM_H
 
@@ -41,11 +20,9 @@
 #include "orbslam3/featureCore/ORBVocabulary.h"
 #include "orbslam3/configCore/Settings.h"
 #include "orbslam3/trackingFrontend/Tracking.h"
-#include "orbslam3/visualizationUi/Viewer.h"
 
 namespace ORB_SLAM3 {
 
-class Viewer;
 class FrameDrawer;
 class MapDrawer;
 class Atlas;
@@ -73,10 +50,10 @@ public:
 
 public:
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
-  // Initialize the SLAM system. It launches the Local Mapping, Loop Closing and
-  // Viewer threads.
+  // Initialize the SLAM system. It launches the Local Mapping and Loop Closing
+  // threads.
   System(const string &strVocFile, const string &strSettingsFile,
-         const eSensor sensor, const bool bUseViewer = true,
+         const eSensor sensor,
          const int initFr = 0, const string &strSequence = std::string());
 
   // Proccess the given stereo frame. Images must be synchronized and rectified.
@@ -126,15 +103,7 @@ public:
   bool isShutDown();
 
   // Save camera trajectory in the TUM RGB-D dataset format.
-  // Only for stereo and RGB-D. This method does not work for monocular.
-  // Call first Shutdown()
-  // See format details at: http://vision.in.tum.de/data/datasets/rgbd-dataset
   void SaveTrajectoryTUM(const string &filename);
-
-  // Save keyframe poses in the TUM RGB-D dataset format.
-  // This method works for all sensor input.
-  // Call first Shutdown()
-  // See format details at: http://vision.in.tum.de/data/datasets/rgbd-dataset
   void SaveKeyFrameTrajectoryTUM(const string &filename);
 
   void SaveTrajectoryEuRoC(const string &filename);
@@ -146,19 +115,9 @@ public:
   // Save data used for initialization debug
   void SaveDebugData(const int &iniIdx);
 
-  // Save camera trajectory in the KITTI dataset format.
-  // Only for stereo and RGB-D. This method does not work for monocular.
-  // Call first Shutdown()
-  // See format details at:
-  // http://www.cvlibs.net/datasets/kitti/eval_odometry.php
   void SaveTrajectoryKITTI(const string &filename);
 
-  // TODO: Save/Load functions
-  // SaveMap(const string &filename);
-  // LoadMap(const string &filename);
-
   // Information from most recent processed frame
-  // You can call this right after TrackMonocular (or stereo or RGBD)
   int GetTrackingState();
   std::vector<MapPoint *> GetTrackedMapPoints();
   std::vector<cv::KeyPoint> GetTrackedKeyPointsUn();
@@ -171,6 +130,16 @@ public:
   void ChangeDataset();
 
   float GetImageScale();
+  int GetSensorType() const { return static_cast<int>(mSensor); }
+
+  // Getters for SlamSession / NavigationEngine
+  Tracking *GetTracker() const { return mpTracker; }
+  FrameDrawer *GetFrameDrawer() const { return mpFrameDrawer; }
+  MapDrawer *GetMapDrawer() const { return mpMapDrawer; }
+  Settings *GetSettings() const { return settings_; }
+  Atlas *GetAtlas() const { return mpAtlas; }
+  LocalMapping *GetLocalMapper() const { return mpLocalMapper; }
+  LoopClosing *GetLoopCloser() const { return mpLoopCloser; }
 
 #ifdef REGISTER_TIMES
   void InsertRectTime(double &time);
@@ -195,35 +164,24 @@ private:
   KeyFrameDatabase *mpKeyFrameDatabase;
 
   // Map structure that stores the pointers to all KeyFrames and MapPoints.
-  // Map* mpMap;
   Atlas *mpAtlas;
 
   // Tracker. It receives a frame and computes the associated camera pose.
-  // It also decides when to insert a new keyframe, create some new MapPoints
-  // and performs relocalization if tracking fails.
   Tracking *mpTracker;
 
   // Local Mapper. It manages the local map and performs local bundle
   // adjustment.
   LocalMapping *mpLocalMapper;
 
-  // Loop Closer. It searches loops with every new keyframe. If there is a loop
-  // it performs a pose graph optimization and full bundle adjustment (in a new
-  // thread) afterwards.
+  // Loop Closer.
   LoopClosing *mpLoopCloser;
-
-  // The viewer draws the map and the current camera pose. It uses Pangolin.
-  Viewer *mpViewer;
 
   FrameDrawer *mpFrameDrawer;
   MapDrawer *mpMapDrawer;
 
-  // System threads: Local Mapping, Loop Closing, Viewer.
-  // The Tracking thread "lives" in the main execution thread that creates the
-  // System object.
+  // System threads: Local Mapping, Loop Closing.
   std::thread *mptLocalMapping;
   std::thread *mptLoopClosing;
-  std::thread *mptViewer;
 
   // Reset flag
   std::mutex mMutexReset;

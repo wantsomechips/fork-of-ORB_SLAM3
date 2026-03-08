@@ -1,100 +1,52 @@
-/**
- * This file is part of ORB-SLAM3
- *
- * Copyright (C) 2017-2021 Carlos Campos, Richard Elvira, Juan J. Gómez
- * Rodríguez, José M.M. Montiel and Juan D. Tardós, University of Zaragoza.
- * Copyright (C) 2014-2016 Raúl Mur-Artal, José M.M. Montiel and Juan D. Tardós,
- * University of Zaragoza.
- *
- * ORB-SLAM3 is free software: you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option) any later
- * version.
- *
- * ORB-SLAM3 is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE. See the GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along with
- * ORB-SLAM3. If not, see <http://www.gnu.org/licenses/>.
- */
-
 #ifndef VIEWER_H
 #define VIEWER_H
 
-#include "orbslam3/visualizationUi/FrameDrawer.h"
-#include "orbslam3/visualizationUi/MapDrawer.h"
+#include "orbslam3/visualizationUi/VisualizationModel.h"
 #include "orbslam3/configCore/Settings.h"
-#include "orbslam3/trackingFrontend/System.h"
-#include "orbslam3/trackingFrontend/Tracking.h"
 
+#include <functional>
 #include <mutex>
 
 namespace ORB_SLAM3 {
 
-class Tracking;
-class FrameDrawer;
-class MapDrawer;
-class System;
 class Settings;
+
+enum class UiEvent {
+    StopRequested,
+    ResetRequested,
+    LocalizationOn,
+    LocalizationOff,
+};
 
 class Viewer {
 public:
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
-  Viewer(System *pSystem, FrameDrawer *pFrameDrawer, MapDrawer *pMapDrawer,
-         Tracking *pTracking, const string &strSettingPath, Settings *settings);
+  Viewer(VisualizationModel *visModel, const std::string &settingPath,
+         Settings *settings);
 
-  void newParameterLoader(Settings *settings);
-
-  // Main thread function. Draw points, keyframes, the current camera pose and
-  // the last processed frame. Drawing is refreshed according to the camera fps.
-  // We use Pangolin.
   void Run();
 
-  void RequestFinish();
+  void RequestExit();
+  bool IsExited() const;
 
-  void RequestStop();
-
-  bool isFinished();
-
-  bool isStopped();
-
-  bool isStepByStep();
-
-  void Release();
-
-  // void SetTrackingPause();
-
-  bool both;
+  void SetEventCallback(std::function<void(UiEvent)> cb);
 
 private:
+  void newParameterLoader(Settings *settings);
   bool ParseViewerParamFile(cv::FileStorage &fSettings);
 
-  bool Stop();
+  VisualizationModel *mpVisModel;
+  std::function<void(UiEvent)> mEventCallback;
 
-  System *mpSystem;
-  FrameDrawer *mpFrameDrawer;
-  MapDrawer *mpMapDrawer;
-  Tracking *mpTracker;
-
-  // 1/fps in ms
   double mT;
   float mImageWidth, mImageHeight;
   float mImageViewerScale;
 
   float mViewpointX, mViewpointY, mViewpointZ, mViewpointF;
 
-  bool CheckFinish();
-  void SetFinish();
-  bool mbFinishRequested;
-  bool mbFinished;
-  std::mutex mMutexFinish;
-
-  bool mbStopped;
-  bool mbStopRequested;
-  std::mutex mMutexStop;
-
-  bool mbStopTrack;
+  bool mbExitRequested = false;
+  bool mbExited = false;
+  mutable std::mutex mMutexExit;
 };
 
 } // namespace ORB_SLAM3
