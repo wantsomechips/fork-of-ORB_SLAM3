@@ -2,29 +2,6 @@ cmake_minimum_required(VERSION 3.16)
 
 project(ORB_SLAM3)
 
-IF(NOT CMAKE_BUILD_TYPE)
-  SET(CMAKE_BUILD_TYPE Release)
-ENDIF()
-
-MESSAGE("Build type: " ${CMAKE_BUILD_TYPE})
-
-set(CMAKE_C_STANDARD 11)
-set(CMAKE_C_STANDARD_REQUIRED ON)
-set(CMAKE_C_EXTENSIONS OFF)
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_EXTENSIONS OFF)
-
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS}  -Wall   -O3")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall   -O3")
-set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -march=native")
-set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -march=native")
-
-# Global Setting
-add_compile_options(-fno-strict-aliasing)
-# Turn off all warnings. This is a third-party library, I don't wanna solve all the warnings in it.
-add_compile_options(-w)
-
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/lib)
 
 LIST(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake_modules)
@@ -68,6 +45,9 @@ set(SLAM_ORBSLAM3_TARGET slam_orbslam3)
 add_library(${SLAM_ORBSLAM3_TARGET} SHARED
     orbslam3Entry.cc
 )
+
+# Turn off all warnings. This is a third-party library, I don't wanna solve all the warnings in it.
+target_compile_options(${SLAM_ORBSLAM3_TARGET} PRIVATE -w)
 
 target_compile_features(${SLAM_ORBSLAM3_TARGET} PUBLIC cxx_std_17)
 
@@ -244,4 +224,3 @@ if(realsense2_FOUND)
             Examples/Calibration/recorder_realsense_T265.cc)
     target_link_libraries(recorder_realsense_T265 ${SLAM_ORBSLAM3_TARGET})
 endif()
-
