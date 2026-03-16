@@ -2,6 +2,10 @@ cmake_minimum_required(VERSION 3.16)
 
 project(ORB_SLAM3)
 
+# Suppress all warnings for this third-party subtree (ext/ + core modules).
+# This is a third-party library, I don't wanna solve all the warnings in it.
+add_compile_options(-w)
+
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/lib)
 
 LIST(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake_modules)
@@ -45,9 +49,6 @@ set(SLAM_ORBSLAM3_TARGET slam_orbslam3)
 add_library(${SLAM_ORBSLAM3_TARGET} SHARED
     orbslam3Entry.cc
 )
-
-# Turn off all warnings. This is a third-party library, I don't wanna solve all the warnings in it.
-target_compile_options(${SLAM_ORBSLAM3_TARGET} PRIVATE -w)
 
 target_compile_features(${SLAM_ORBSLAM3_TARGET} PUBLIC cxx_std_17)
 
