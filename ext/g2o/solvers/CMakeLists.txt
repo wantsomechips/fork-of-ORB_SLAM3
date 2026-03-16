@@ -1,7 +1,7 @@
 add_library(slam_ext_g2o_solvers INTERFACE)
 
 target_include_directories(slam_ext_g2o_solvers
-    INTERFACE
+    SYSTEM INTERFACE
         ${CMAKE_CURRENT_SOURCE_DIR}/include
 )
 
@@ -18,7 +18,7 @@ if(TARGET slam_ext_eigen)
     )
 elseif(EIGEN3_INCLUDE_DIR)
     target_include_directories(slam_ext_g2o_solvers
-        INTERFACE
+        SYSTEM INTERFACE
             ${EIGEN3_INCLUDE_DIR}
     )
 endif()

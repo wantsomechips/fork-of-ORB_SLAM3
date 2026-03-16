@@ -29,7 +29,7 @@ target_link_libraries(
         slam_ext_pangolin_vars
 )
 target_compile_features(slam_ext_pangolin_display PUBLIC cxx_std_17)
-target_include_directories(slam_ext_pangolin_display PUBLIC ${CMAKE_CURRENT_LIST_DIR}/include)
+target_include_directories(slam_ext_pangolin_display SYSTEM PUBLIC ${CMAKE_CURRENT_LIST_DIR}/include)
 set_target_properties(
     slam_ext_pangolin_display
     PROPERTIES VERSION ${PANGOLIN_VERSION} SOVERSION ${PANGOLIN_VERSION_MAJOR}

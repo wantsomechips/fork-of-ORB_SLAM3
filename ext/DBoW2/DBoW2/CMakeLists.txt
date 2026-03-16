@@ -6,8 +6,8 @@ add_library(slam_ext_dbow2_dbow2
         ${CMAKE_CURRENT_SOURCE_DIR}/src/ScoringObject.cpp
 )
 
-target_include_directories(slam_ext_dbow2_dbow2 
-    PUBLIC
+target_include_directories(slam_ext_dbow2_dbow2
+    SYSTEM PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}/include
         ${PROJECT_SOURCE_DIR}/ext/DBoW2/DUtils/include
         ${OpenCV_INCLUDE_DIRS}

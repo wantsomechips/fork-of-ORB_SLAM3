@@ -26,7 +26,7 @@ add_library(slam_ext_g2o_core
 )
 
 target_include_directories(slam_ext_g2o_core
-    PUBLIC
+    SYSTEM PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}/include
     PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/include/g2o/core
@@ -45,7 +45,7 @@ if(TARGET slam_ext_eigen)
     )
 elseif(EIGEN3_INCLUDE_DIR)
     target_include_directories(slam_ext_g2o_core
-        PUBLIC
+        SYSTEM PUBLIC
             ${EIGEN3_INCLUDE_DIR}
     )
 endif()

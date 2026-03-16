@@ -43,7 +43,7 @@ if(Threads_FOUND)
 endif()
 
 target_compile_features(slam_ext_pangolin_core PUBLIC cxx_std_17)
-target_include_directories(slam_ext_pangolin_core PUBLIC ${CMAKE_CURRENT_LIST_DIR}/include)
+target_include_directories(slam_ext_pangolin_core SYSTEM PUBLIC ${CMAKE_CURRENT_LIST_DIR}/include)
 set_target_properties(
     slam_ext_pangolin_core
     PROPERTIES VERSION ${PANGOLIN_VERSION} SOVERSION ${PANGOLIN_VERSION_MAJOR}

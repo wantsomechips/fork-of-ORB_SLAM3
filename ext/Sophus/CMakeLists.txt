@@ -6,7 +6,7 @@ if(MSVC)
 endif (MSVC)
 
 target_include_directories(slam_ext_sophus
-    INTERFACE
+    SYSTEM INTERFACE
         ${CMAKE_CURRENT_SOURCE_DIR}/include/
 )
 target_link_libraries(slam_ext_sophus 

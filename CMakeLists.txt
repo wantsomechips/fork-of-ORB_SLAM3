@@ -53,7 +53,7 @@ add_library(${SLAM_ORBSLAM3_TARGET} SHARED
 target_compile_features(${SLAM_ORBSLAM3_TARGET} PUBLIC cxx_std_17)
 
 target_include_directories(${SLAM_ORBSLAM3_TARGET}
-    PUBLIC
+    SYSTEM PUBLIC
         ${ORB_SLAM3_MODULE_INCLUDE_DIRS}
 )
 

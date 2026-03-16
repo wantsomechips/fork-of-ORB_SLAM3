@@ -116,7 +116,7 @@ target_link_libraries(
 target_compile_features(slam_ext_pangolin_windowing PUBLIC cxx_std_17)
 target_include_directories(
     slam_ext_pangolin_windowing
-    PUBLIC
+    SYSTEM PUBLIC
         ${CMAKE_CURRENT_LIST_DIR}/include
         ${CMAKE_CURRENT_BINARY_DIR}/include
 )
