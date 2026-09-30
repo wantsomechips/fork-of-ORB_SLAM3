@@ -7,6 +7,9 @@
 # Unignore all dirs
 !*/
 
+# Unignore Eigen public headers, which have no extension
+!ext/eigen/Eigen/*
+
 CMakeLists.txt.user
 CMakeLists_modified.txt
 
@@ -79,8 +82,8 @@ LBA_Stats.txt
 LocalMapTimeStats.txt
 TrackLocalMapStats.txt
 TrackingTimeStats.txt
-time*
-Time*
+/time*
+/Time*
 Table_Euroc
 Table_TUMVI_rooms/
 *.pyc
