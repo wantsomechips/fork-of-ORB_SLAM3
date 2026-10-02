@@ -44,6 +44,14 @@ add_subdirectory(trackingFrontend/)
 add_subdirectory(mappingBackend/)
 add_subdirectory(visualizationUi/)
 
+# Tracking/System/SlamSession 调用 LocalMapping、LoopClosing 与 Drawer/Viewer，模块间成环；
+# 补声明回边，CMake 才会在链接行上重复这组静态库（GNU ld 只单遍扫描静态库）。
+target_link_libraries(slam_orbslam3_trackingFrontend
+    PRIVATE
+        slam_orbslam3_mappingBackend
+        slam_orbslam3_visualizationUi
+)
+
 set(SLAM_ORBSLAM3_TARGET slam_orbslam3)
 
 add_library(${SLAM_ORBSLAM3_TARGET} SHARED
