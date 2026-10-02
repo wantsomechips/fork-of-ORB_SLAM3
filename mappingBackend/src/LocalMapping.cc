@@ -946,14 +946,14 @@ void LocalMapping::KeyFrameCulling() {
       MapPoint *pMP = vpMapPoints[i];
       if (pMP) {
         if (!pMP->isBad()) {
+          // Kept verbatim from upstream ORB-SLAM3 V1.0 so that fisheye-stereo
+          // results stay comparable with the published corridor3 data. With two
+          // fisheye cameras mvDepth holds only NLeft entries and mvKeysRight is
+          // indexed without subtracting NLeft, so right-camera keypoints read
+          // out of bounds: unspecified values on macOS, crashes on Linux.
+          // Pinhole stereo (NLeft == -1) never reaches those reads.
           if (!mbMonocular) {
-            // Fisheye stereo stores depth for the NLeft left keypoints only;
-            // right-camera keypoints carry no depth and are skipped like other
-            // points without depth.
-            const bool hasDepthEntry =
-                pKF->NLeft == -1 || i < static_cast<size_t>(pKF->NLeft);
-            if (!hasDepthEntry || pKF->mvDepth[i] > pKF->mThDepth ||
-                pKF->mvDepth[i] < 0)
+            if (pKF->mvDepth[i] > pKF->mThDepth || pKF->mvDepth[i] < 0)
               continue;
           }
 
@@ -962,7 +962,7 @@ void LocalMapping::KeyFrameCulling() {
             const int &scaleLevel = (pKF->NLeft == -1) ? pKF->mvKeysUn[i].octave
                                     : (i < pKF->NLeft)
                                         ? pKF->mvKeys[i].octave
-                                        : pKF->mvKeysRight[i - pKF->NLeft].octave;
+                                        : pKF->mvKeysRight[i].octave;
             const map<KeyFrame *, tuple<int, int>> observations =
                 pMP->GetObservations();
             int nObs = 0;
