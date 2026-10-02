@@ -491,7 +491,11 @@ void LocalMapping::CreateNewMapPoints() {
           : (idx1 < mpCurrentKeyFrame->NLeft)
               ? mpCurrentKeyFrame->mvKeys[idx1]
               : mpCurrentKeyFrame->mvKeysRight[idx1 - mpCurrentKeyFrame->NLeft];
-      const float kp1_ur = mpCurrentKeyFrame->mvuRight[idx1];
+      // Fisheye stereo keeps only NLeft entries in mvuRight while idx1 may index
+      // the right camera; the value is unused there, so read it only without mpCamera2.
+      const float kp1_ur = mpCurrentKeyFrame->mpCamera2
+                               ? -1.0f
+                               : mpCurrentKeyFrame->mvuRight[idx1];
       bool bStereo1 = (!mpCurrentKeyFrame->mpCamera2 && kp1_ur >= 0);
       const bool bRight1 =
           (mpCurrentKeyFrame->NLeft == -1 || idx1 < mpCurrentKeyFrame->NLeft)
@@ -503,7 +507,7 @@ void LocalMapping::CreateNewMapPoints() {
                                     ? pKF2->mvKeys[idx2]
                                     : pKF2->mvKeysRight[idx2 - pKF2->NLeft];
 
-      const float kp2_ur = pKF2->mvuRight[idx2];
+      const float kp2_ur = pKF2->mpCamera2 ? -1.0f : pKF2->mvuRight[idx2];
       bool bStereo2 = (!pKF2->mpCamera2 && kp2_ur >= 0);
       const bool bRight2 =
           (pKF2->NLeft == -1 || idx2 < pKF2->NLeft) ? false : true;
@@ -943,7 +947,13 @@ void LocalMapping::KeyFrameCulling() {
       if (pMP) {
         if (!pMP->isBad()) {
           if (!mbMonocular) {
-            if (pKF->mvDepth[i] > pKF->mThDepth || pKF->mvDepth[i] < 0)
+            // Fisheye stereo stores depth for the NLeft left keypoints only;
+            // right-camera keypoints carry no depth and are skipped like other
+            // points without depth.
+            const bool hasDepthEntry =
+                pKF->NLeft == -1 || i < static_cast<size_t>(pKF->NLeft);
+            if (!hasDepthEntry || pKF->mvDepth[i] > pKF->mThDepth ||
+                pKF->mvDepth[i] < 0)
               continue;
           }
 
@@ -952,7 +962,7 @@ void LocalMapping::KeyFrameCulling() {
             const int &scaleLevel = (pKF->NLeft == -1) ? pKF->mvKeysUn[i].octave
                                     : (i < pKF->NLeft)
                                         ? pKF->mvKeys[i].octave
-                                        : pKF->mvKeysRight[i].octave;
+                                        : pKF->mvKeysRight[i - pKF->NLeft].octave;
             const map<KeyFrame *, tuple<int, int>> observations =
                 pMP->GetObservations();
             int nObs = 0;

@@ -149,7 +149,9 @@ void EdgeSE3ProjectXYZ::linearizeOplus() {
   double y = xyz_trans[1];
   double z = xyz_trans[2];
 
-  auto projectJac = -pCamera->projectJac(xyz_trans);
+  // Evaluate now: `auto` would keep an Eigen expression referencing the
+  // temporary returned by projectJac, which dies at the end of this statement.
+  const Eigen::Matrix<double, 2, 3> projectJac = -pCamera->projectJac(xyz_trans);
 
   _jacobianOplusXi = projectJac * T.rotation().toRotationMatrix();
 

@@ -364,16 +364,21 @@ void FrameDrawer::Update(Tracking *pTracker) {
     for (int i = 0; i < N; i++) {
       MapPoint *pMP = pTracker->mCurrentFrame.mvpMapPoints[i];
       if (pMP) {
+        // With two cameras N spans the left then the right keypoints.
+        const cv::KeyPoint &kp =
+            (static_cast<size_t>(i) < mvCurrentKeys.size())
+                ? mvCurrentKeys[i]
+                : mvCurrentKeysRight[i - mvCurrentKeys.size()];
         if (!pTracker->mCurrentFrame.mvbOutlier[i]) {
           if (pMP->Observations() > 0)
             mvbMap[i] = true;
           else
             mvbVO[i] = true;
 
-          mmMatchedInImage[pMP->mnId] = mvCurrentKeys[i].pt;
+          mmMatchedInImage[pMP->mnId] = kp.pt;
         } else {
           mvpOutlierMPs.push_back(pMP);
-          mvOutlierKeys.push_back(mvCurrentKeys[i]);
+          mvOutlierKeys.push_back(kp);
         }
       }
     }
